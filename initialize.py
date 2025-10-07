@@ -267,7 +267,7 @@ def check_user_agent():
     config = load_config()
     user_agent = config.get("USER_AGENT", os.getenv("USER_AGENT", "DefaultUserAgent/1.0"))
     if user_agent == "DefaultUserAgent/1.0":
-        print("WARNING: USER_AGENT is not set. Using default value.")
+        print("ERROR: USER_AGENT is not set. Please check config.json or set the USER_AGENT environment variable.")
     else:
         print(f"USER_AGENT is set to: {user_agent}")
 
