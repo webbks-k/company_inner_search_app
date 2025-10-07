@@ -242,3 +242,21 @@ def adjust_string(s):
     
     # OSがWindows以外の場合はそのまま返す
     return s
+
+
+def check_user_agent():
+    """
+    USER_AGENT環境変数が設定されているか確認
+    """
+    user_agent = os.getenv("USER_AGENT")
+    if not user_agent:
+        raise EnvironmentError("USER_AGENT environment variable not set.")
+    else:
+        print(f"USER_AGENT is set to: {user_agent}")
+
+
+# デバッグ用に環境変数を確認
+print("DEBUG: USER_AGENT=", os.getenv("USER_AGENT"))
+
+# 初期化処理の一部としてUSER_AGENTを確認
+check_user_agent()
