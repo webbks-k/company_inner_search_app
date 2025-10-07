@@ -268,7 +268,9 @@ def check_user_agent():
     user_agent = config.get("USER_AGENT", os.getenv("USER_AGENT", "DefaultUserAgent/1.0"))
     if user_agent == "DefaultUserAgent/1.0":
         print("ERROR: USER_AGENT is not set. Please check config.json or set the USER_AGENT environment variable.")
+        os.environ["USER_AGENT"] = user_agent  # ←追加（強制的に設定）
     else:
+        os.environ["USER_AGENT"] = user_agent  # ←追加
         print(f"USER_AGENT is set to: {user_agent}")
 
 
