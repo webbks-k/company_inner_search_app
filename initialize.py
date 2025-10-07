@@ -51,43 +51,49 @@ def initialize_logger():
     """
     ログ出力の設定
     """
-    # 指定のログフォルダが存在すれば読み込み、存在しなければ新規作成
-    os.makedirs(ct.LOG_DIR_PATH, exist_ok=True)
-    
-    # 引数に指定した名前のロガー（ログを記録するオブジェクト）を取得
-    # 再度別の箇所で呼び出した場合、すでに同じ名前のロガーが存在していれば読み込む
-    logger = logging.getLogger(ct.LOGGER_NAME)
-
-    # すでにロガーにハンドラー（ログの出力先を制御するもの）が設定されている場合、同じログ出力が複数回行われないよう処理を中断する
-    if logger.hasHandlers():
+    try:
+        # 指定のログフォルダが存在すれば読み込み、存在しなければ新規作成
+        os.makedirs(ct.LOG_DIR_PATH, exist_ok=True)
+    except Exception as e:
+        print(f"ログディレクトリの作成中にエラーが発生しました: {e}")
         return
 
-    # 1日単位でログファイルの中身をリセットし、切り替える設定
-    log_handler = TimedRotatingFileHandler(
-        os.path.join(ct.LOG_DIR_PATH, ct.LOG_FILE),
-        when="D",
-        encoding="utf8"
-    )
-    # 出力するログメッセージのフォーマット定義
-    # - 「levelname」: ログの重要度（INFO, WARNING, ERRORなど）
-    # - 「asctime」: ログのタイムスタンプ（いつ記録されたか）
-    # - 「lineno」: ログが出力されたファイルの行番号
-    # - 「funcName」: ログが出力された関数名
-    # - 「session_id」: セッションID（誰のアプリ操作か分かるように）
-    # - 「message」: ログメッセージ
-    formatter = logging.Formatter(
-        f"[%(levelname)s] %(asctime)s line %(lineno)s, in %(funcName)s, session_id={st.session_state.session_id}: %(message)s"
-    )
+    try:
+        # 引数に指定した名前のロガー（ログを記録するオブジェクト）を取得
+        logger = logging.getLogger(ct.LOGGER_NAME)
 
-    # 定義したフォーマッターの適用
-    log_handler.setFormatter(formatter)
+        # すでにロガーにハンドラーが設定されている場合、処理を中断する
+        if logger.hasHandlers():
+            return
 
-    # ログレベルを「INFO」に設定
-    logger.setLevel(logging.INFO)
+        # 1日単位でログファイルの中身をリセットし、切り替える設定
+        log_handler = TimedRotatingFileHandler(
+            os.path.join(ct.LOG_DIR_PATH, ct.LOG_FILE),
+            when="D",
+            encoding="utf8"
+        )
+        # 出力するログメッセージのフォーマット定義
+        # - 「levelname」: ログの重要度（INFO, WARNING, ERRORなど）
+        # - 「asctime」: ログのタイムスタンプ（いつ記録されたか）
+        # - 「lineno」: ログが出力されたファイルの行番号
+        # - 「funcName」: ログが出力された関数名
+        # - 「session_id」: セッションID（誰のアプリ操作か分かるように）
+        # - 「message」: ログメッセージ
+        formatter = logging.Formatter(
+            f"[%(levelname)s] %(asctime)s line %(lineno)s, in %(funcName)s, session_id={st.session_state.session_id}: %(message)s"
+        )
 
-    # 作成したハンドラー（ログ出力先を制御するオブジェクト）を、
-    # ロガー（ログメッセージを実際に生成するオブジェクト）に追加してログ出力の最終設定
-    logger.addHandler(log_handler)
+        # 定義したフォーマッターの適用
+        log_handler.setFormatter(formatter)
+
+        # ログレベルを「INFO」に設定
+        logger.setLevel(logging.INFO)
+
+        # 作成したハンドラー（ログ出力先を制御するオブジェクト）を、
+        # ロガー（ログメッセージを実際に生成するオブジェクト）に追加してログ出力の最終設定
+        logger.addHandler(log_handler)
+    except Exception as e:
+        print(f"ログハンドラーの設定中にエラーが発生しました: {e}")
 
 
 def initialize_session_id():
