@@ -248,9 +248,9 @@ def check_user_agent():
     """
     USER_AGENT環境変数が設定されているか確認
     """
-    user_agent = os.getenv("USER_AGENT")
-    if not user_agent:
-        raise EnvironmentError("USER_AGENT environment variable not set.")
+    user_agent = os.getenv("USER_AGENT", "DefaultUserAgent/1.0")  # デフォルト値を設定
+    if user_agent == "DefaultUserAgent/1.0":
+        print("WARNING: USER_AGENT environment variable not set. Using default value.")
     else:
         print(f"USER_AGENT is set to: {user_agent}")
 
