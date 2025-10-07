@@ -19,6 +19,7 @@ from langchain.text_splitter import CharacterTextSplitter
 from langchain_openai import OpenAIEmbeddings
 from langchain_community.vectorstores import Chroma
 import constants as ct
+import json
 
 
 ############################################################
@@ -244,13 +245,29 @@ def adjust_string(s):
     return s
 
 
+def load_config():
+    """
+    config.jsonから設定を読み込む
+
+    Returns:
+        dict: 読み込んだ設定
+    """
+    try:
+        with open("config.json", "r") as file:
+            return json.load(file)
+    except FileNotFoundError:
+        print("ERROR: config.json not found. Please ensure it exists.")
+        return {}
+
+
 def check_user_agent():
     """
-    USER_AGENT環境変数が設定されているか確認
+    USER_AGENT設定が存在するか確認
     """
-    user_agent = os.getenv("USER_AGENT", "DefaultUserAgent/1.0")  # デフォルト値を設定
+    config = load_config()
+    user_agent = config.get("USER_AGENT", os.getenv("USER_AGENT", "DefaultUserAgent/1.0"))
     if user_agent == "DefaultUserAgent/1.0":
-        print("WARNING: USER_AGENT environment variable not set. Using default value.")
+        print("WARNING: USER_AGENT is not set. Using default value.")
     else:
         print(f"USER_AGENT is set to: {user_agent}")
 
